@@ -1,4 +1,4 @@
-const { S3Client, GetObjectCommand ,PutObjectCommand} = require("@aws-sdk/client-s3") 
+const { S3Client, GetObjectCommand ,PutObjectCommand,ListObjectsV2Command} = require("@aws-sdk/client-s3") 
 const {getSignedUrl} = require("@aws-sdk/s3-request-presigner") 
 
 const s3Client = new S3Client({
@@ -18,6 +18,14 @@ async function getObjectURl(key) {
     const URl = await getSignedUrl(s3Client,command,{expiresIn:30});
     return URl;
 }
+async function listAllObjects() {
+    const command = new ListObjectsV2Command({
+        Bucket: "learningbucket-one",
+        Key: "/",
+    });
+    const result = await s3Client.send(command);
+    console.log(result)
+}
 async function putObject(filename,contentType){
     const command = new PutObjectCommand({
         Bucket: "learningbucket-one",
@@ -29,8 +37,8 @@ async function putObject(filename,contentType){
 
 }
 async function URL() {
-    
-   console.log("URL for Object : BlackWindowWallpaper.jpg is ",await getObjectURl("/uploads/files/image - 1774877458217.png"))
+    await listAllObjects();
+   //console.log("URL for Object : BlackWindowWallpaper.jpg is ",await getObjectURl("/uploads/files/image - 1774877458217.png"))
   // console.log("URL for Uploading Files :", await putObject(`image - ${Date.now()}.png`))
 }
 URL();
